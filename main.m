@@ -14,7 +14,7 @@ elevation = reshape(X_grid(:,3),sz);
 coast = reshape(X_grid(:,4),sz);
 coast_SE = reshape(X_grid(:,5),sz);
 coast_NO = reshape(X_grid(:,6),sz);
-
+% Test comment
 figure(1);
 title('Data');
 subplot(3,2,1);
