@@ -16,6 +16,7 @@ coast_SE = reshape(X_grid(:,5),sz);
 coast_NO = reshape(X_grid(:,6),sz);
 
 figure(1);
+%Test
 title('Data');
 subplot(3,2,1);
 imagesc(longitude);
