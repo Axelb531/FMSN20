@@ -4,14 +4,14 @@ x_elevation = X(:,3);
 x_coast = X(:,4);
 x_coastSE = X(:,5);
 x_coastNO = X(:,6);
-X_1 = [x_lat, x_elevation, x_coast, x_coastSE, x_coastNO];
+X_1 = [ones(425,1), x_lat, x_elevation, x_coast, x_coastSE, x_coastNO];
 beta_hat_1 = (X_1'*X_1) \ (X_1'*Y);
 X_valid_1 = X_valid;
 X_valid_1(:,1) = [];
-Y_hat_1 = X_valid_1 * beta_hat_1;
-res_1 = Y_valid - Y_hat_1;
-accuracy = sum((Y_valid-Y_hat_1).^2);
-sigma2_hat_1 = res_1'*res_1 / (length(Y_hat_1) - size(X,2) - 1);
+sigma2_hat_1 = sum(( (Y - X_1*beta_hat_1).^2) /  (length(Y) - size(X,2) - 1));
+Y_hat_1 = X_valid_1 .* beta_hat_1; % Nugget?
+%accuracy = sum((Y_valid-Y_hat_1).^2);
+%sigma2_hat_1 = res_1'*res_1 / (length(Y_hat_1) - size(X,2) - 1);
 
 % Computing the covariance matrix
 Sigma = sigma2_hat_1 * inv(X_1'*X_1);
@@ -19,9 +19,9 @@ Sigma = sigma2_hat_1 * inv(X_1'*X_1);
 X_1_transpose = X_1';
 inv_X_1 = inv(X_1_transpose*X_1);
 var_beta_hat_1 = sigma2_hat_1 * inv_X_1; 
-
+Y_hat_1_nugg =  X_valid_1 * beta_hat_1 + randn(106,1)*sigma2_hat_1; % 106 = size(X_valid_1 * beta_hat_1)
 % RMSE 
-RMSE_1 = sqrt(mean( (res_1).^2) );
+RMSE_1 = sqrt(mean( (Y_valid - Y_hat_1).^2) );
 
 %% MODEL 2 latitude, elevation
 X_2 = [x_lat, x_elevation];
