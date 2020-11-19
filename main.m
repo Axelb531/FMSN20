@@ -58,8 +58,5 @@ subplot(3,2,6);
 scatter(X(:,6),Y,20,'filled');
 xlabel('coast_NO');
 
-%% BHAT
-Y_nb = Y-(X(:,4).*Y);
-cd = X(:,4);
-figure(3), scatter(X_coast,Y_nb, 20, 'filled');
-bhat = (cd.'*cd) \ (cd.'*Y_nb);
+%% OLS 
+OLS_Models;
