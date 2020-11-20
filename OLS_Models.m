@@ -42,5 +42,5 @@ RMSE(7) = sqrt(mean((resid_7).^2) );
 figure(2)
 b = bar(RMSE,'FaceColor', colors(5,:));
 xlabel('Model');
-ylabel('Roor Mean Square Error of Residues');
+ylabel('Root Mean Square Error of Residues');
 grid on;
