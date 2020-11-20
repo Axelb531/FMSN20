@@ -44,3 +44,28 @@ b = bar(RMSE,'FaceColor', colors(5,:));
 xlabel('Model');
 ylabel('Root Mean Square Error of Residues');
 grid on;
+%Model 1 is best fit
+Beta = Beta_1;
+%% Validation of model
+n_y = size(Y_valid, 1);
+X_true = [ones(n_y, 1),X_valid(:,2:6)];
+Y_hat = X_true*Beta;
+sigma_2 = norm(Y_valid-Y_hat)^2/(n_y-size(X_true,2));
+RMSE(7) = sqrt(mean((Y_valid-Y_hat).^2) );
+%Confidenc interval
+ci_h = Y_valid+1.96*sqrt(var(Y_valid)/n_y);
+ci_l = Y_valid-1.96*sqrt(var(Y_valid)/n_y);
+figure(3);
+plot(Y_valid, 'x');
+hold on;
+plot(Y_hat, '*');
+%ylim([0,15]);
+plot(ci_h ,'--b');
+plot(ci_l,'--b');
+legend;
+%plotting Y-hat on map:
+Y_hat_land = [ones(40820,1),X_grid(:,2:6)]*Beta;
+Y_image = reshape(Y_hat_land, sz);
+figure(4);
+imagesc(Y_image);
+colorbar;
