@@ -37,7 +37,7 @@ subplot(3,2,6);imagesc(Coast_NO_img),colorbar,title('Distance to Norwegian coast
 %plotting diffrent correlations
 figure(2), subplot(3,2,1);
 
-title('Kovarians');
+title('Covariance');
 scatter(X(:,1),Y,20,colors(1,:), 'filled');
 grid on;
 xlabel('Longitude');
