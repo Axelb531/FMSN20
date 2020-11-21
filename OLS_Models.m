@@ -46,13 +46,16 @@ ylabel('Root Mean Square Error of Residues');
 grid on;
 %Model 1 is best fit
 Beta = Beta_1;
+Sigma2 = Sigma2_1;
+Cov = Cov_1;
+X1_grid = [ones(40820,1),X_grid(:,2:6)]; 
 %% Validation of model
 n_y = size(Y_valid, 1);
 X_true = [ones(n_y, 1),X_valid(:,2:6)];
 Y_hat = X_true*Beta;
 sigma_2 = norm(Y_valid-Y_hat)^2/(n_y-size(X_true,2));
 RMSE(7) = sqrt(mean((Y_valid-Y_hat).^2) );
-%Confidenc interval
+%Confidence interval
 ci_h = Y_valid+1.96*sqrt(var(Y_valid)/n_y);
 ci_l = Y_valid-1.96*sqrt(var(Y_valid)/n_y);
 figure(3);
@@ -64,8 +67,17 @@ plot(ci_h ,'--b');
 plot(ci_l,'--b');
 legend;
 %plotting Y-hat on map:
-Y_hat_land = [ones(40820,1),X_grid(:,2:6)]*Beta;
+Y_hat_land = X1_grid*Beta;
 Y_image = reshape(Y_hat_land, sz);
 figure(4);
-imagesc(Y_image);
+imagesc(Y_image); 
+colorbar;
+%%
+Vbeta = Sigma2 * inv(X1' * X1);
+Vmu = sum((X1_grid*Vbeta).*X1_grid,2);
+V_y = Sigma2 + Vmu; 
+V_y_image = reshape(V_y, sz);
+std = sqrt(V_y_image);
+figure(5);
+imagesc(std); 
 colorbar;
