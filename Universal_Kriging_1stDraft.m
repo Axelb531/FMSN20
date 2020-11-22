@@ -50,7 +50,7 @@ figure,
 imagesc(Kriging); 
 colorbar;
 
-Y_krig = X_true*beta_Krig;
+Y_krig = X_valid*beta_Krig;
 res_krig_sum = sum((Y_valid-Y_krig).^2);
 res_ols_sum =  sum((Y_valid-Y_hat).^2);
 
@@ -61,7 +61,7 @@ imagesc(V_Kriging);
 colorbar;
 
 %
-Y_ML_val =  X_true*beta_Krig + Sigma_vk*((Sigma_kk) \ (Y-X1*beta_Krig));
+Y_ML_val =  X_valid*beta_Krig + Sigma_vk*((Sigma_kk) \ (Y-X1*beta_Krig));
 %
 
 %% REML
@@ -73,13 +73,9 @@ Sigma_uk = matern_covariance(Duk, par_2(1), par_2(2), par_2(3)) + par_2(4).*eye(
 Sigma_uu = matern_covariance(Duu, par_2(1), par_2(2), par_2(3)) + par_2(4).*eye(size(Duu));
 Sigma_ku = matern_covariance(Dku, par_2(1), par_2(2), par_2(3)) + par_2(4).*eye(size(Dku));
 
- 
 Y_hat_2 = X1_grid * beta_Krig_2 + Sigma_uk*((Sigma_kk) \ (Y-X1*beta_Krig_2));
-
 V_y_eta = Sigma_uu - Sigma_uk * (Sigma_kk \ Sigma_ku);
-
 V_y_mu = (X1_grid' - X1'*(Sigma_kk \ Sigma_ku))' * ((X1'*(Sigma_kk \ X1)) \ (X1_grid' - X1'*(Sigma_kk \ Sigma_ku)));
-
 V_y_Kriging_2 = diag(V_y_eta + V_y_mu);
 %%
 Kriging_2 = nan(sz);
@@ -95,10 +91,10 @@ imagesc(V_Kriging_2);
 colorbar;
 %%
  
-Y_REML_val = X_true*beta_Krig_2 + Sigma_vk*((Sigma_kk) \ (Y-X1*beta_Krig_2));
+Y_REML_val = X_valid*beta_Krig_2 + Sigma_vk*((Sigma_kk) \ (Y-X1*beta_Krig_2));
 res_ML = Y_valid - Y_ML_val;
 res_REML = Y_valid - Y_REML_val;
-Y_OLS_val = X_true*Beta;
+Y_OLS_val = X_valid*Beta;
 res_OLS = Y_valid - Y_OLS_val;
 RS_ML = sum((res_ML).^2);
 RS_REML = sum((res_REML).^2);
