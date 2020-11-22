@@ -69,18 +69,29 @@ plot(Y_hat, '*');
 plot(ci_h ,'--b');
 plot(ci_l,'--b');
 legend;
-%plotting Y-hat on map:
+%% Plotting Y-hat on map:
 Y_hat_land = X1_grid*Beta;
 Y_image = reshape(Y_hat_land, sz);
 figure(4);
-imagesc(Y_image); 
-colorbar;
-%%
+imagesc([4.9 30.9], [71.1 55.4], Y_image, 'alphadata', I_img)
+axis xy; 
+hold on;
+plot(Border(:,1),Border(:,2))
+colorbar
+title('Y_{hat}OLS')
+hold off
+  
+%% Plotting variance on map
 Vbeta = Sigma2 * inv(X1' * X1);
 Vmu = sum((X1_grid*Vbeta).*X1_grid,2);
 V_y = Sigma2 + Vmu; 
 V_y_image = reshape(V_y, sz);
 V_std = sqrt(V_y_image);
 figure(5);
-imagesc(V_std); 
-colorbar;
+imagesc([4.9 30.9], [71.1 55.4], V_std, 'alphadata', I_img)
+axis xy; 
+hold on;
+plot(Border(:,1),Border(:,2))
+colorbar
+title('Y_hat_OLS')
+hold off
