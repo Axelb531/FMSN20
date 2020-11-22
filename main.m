@@ -53,4 +53,4 @@ end
 OLS_Models;
 
 %% Kriging
-Universal_kriging_1stDraft;
+Universal_Kriging_1stDraft;
