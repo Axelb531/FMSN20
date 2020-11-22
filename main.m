@@ -26,41 +26,31 @@ Coast_NO_img = reshape(X_grid(:,6),sz);
 
 % Plots covariates
 figure(1);
-subplot(3,2,1),imagesc(Longitude_img),colorbar,title('Longitude');
-subplot(3,2,2),imagesc(Latitude_img),colorbar,title('Latitude');
-subplot(3,2,3),imagesc(Elevation_img),colorbar,title('Elevation');
-subplot(3,2,4),imagesc(Coast_img),colorbar,title('Distance to coast');
-subplot(3,2,5),imagesc(Coast_SE_img),colorbar,title('Distance to Swedish coast');
-subplot(3,2,6);imagesc(Coast_NO_img),colorbar,title('Distance to Norwegian coast');
+for i= 1:6
+subplot(2,3,i)
+  imagesc([4.9 30.9], [71.1 55.4], X_img(:,:,i), 'alphadata', I_img)
+  axis xy; 
+  hold on;
+  plot(Border(:,1),Border(:,2))
+  scatter(X(:,1), X(:,2), 25, X(:,i),...
+    'filled','markeredgecolor','k')
+  colorbar
+  hold off
+  title(names{i})
+end
 
+% Plotting diffrent correlations
+figure(2), 
+for i =1:6 
+subplot(3,2,i);
+scatter(X(:,i),Y,20,colors(i,:), 'filled');
+grid on;
+xlabel(names(i));
+end
 
-%plotting diffrent correlations
-figure(2), subplot(3,2,1);
-
-title('Covariance');
-scatter(X(:,1),Y,20,colors(1,:), 'filled');
-grid on;
-xlabel('Longitude');
-subplot(3,2,2);
-scatter(X(:,2),Y,20,colors(2,:),'filled');
-grid on;
-xlabel('Latitude');
-subplot(3,2,3);
-scatter(X(:,3),Y,20,colors(3,:),'filled');
-grid on;
-xlabel('Elevation');
-subplot(3,2,4);
-scatter(X(:,4),Y,20,colors(4,:),'filled');
-grid on;
-xlabel('Distance to coast');
-subplot(3,2,5);
-scatter(X(:,5),Y,20,colors(5,:),'filled');
-grid on;
-xlabel('Distance to Swedish coast');
-subplot(3,2,6);
-scatter(X(:,6),Y,20,colors(6,:),'filled');
-grid on;
-xlabel('Distance to Norwegian coast');
 
 %% OLS 
 OLS_Models;
+
+%% Kriging
+Universal_kriging_1stDraft;
