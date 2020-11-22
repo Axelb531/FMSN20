@@ -55,10 +55,11 @@ X1_grid = [ones(length(X_grid(I_land)), 1), X_grid(I_land,2), X_grid(I_land,3), 
 res = resid_1;
 %% Validation of model
 n_y = size(Y_valid, 1);
-X_valid = [ones(n_y, 1),X_valid(:,2:6)];
-Y_hat = X_valid*Beta;
+X_true = [ones(n_y, 1),X_valid(:,2:6)];
+Y_hat = X_true*Beta;
 sigma_2 = norm(Y_valid-Y_hat)^2/(n_y-size(X_valid,2));
 RMSE(7) = sqrt(mean((Y_valid-Y_hat).^2) );
+
 %Confidence interval
 ci_h = Y_valid+1.96*sqrt(var(Y_valid)/n_y);
 ci_l = Y_valid-1.96*sqrt(var(Y_valid)/n_y);
