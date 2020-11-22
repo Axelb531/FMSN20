@@ -1,6 +1,6 @@
 %% MODEL 1: Latitude, Elevation, Coast, CoastSE, CoastNO
 % Creating dataframe for model
-X1 = [ ones(n_x,1), Latitude , Elevation, Coast, Coast_SE, Coast_NO];
+X1 = [ones(n_x,1), Latitude , Elevation, Coast, Coast_SE, Coast_NO];
 
 % Computing regression Parameters
 [Beta_1, resid_1, Sigma2_1, Cov_1] = OLS_func(X1,Y);
@@ -44,7 +44,9 @@ b = bar(RMSE,'FaceColor', colors(5,:));
 xlabel('Model');
 ylabel('Root Mean Square Error of Residues');
 grid on;
-%Model 1 is best fit
+
+% Model 1 is best fit
+
 Beta = Beta_1;
 Sigma2 = Sigma2_1;
 Cov = Cov_1;

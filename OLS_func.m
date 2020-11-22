@@ -11,5 +11,5 @@ R = X'*X;
 res = y-X*Beta;
 % Calculating Variance of residues
 sigma2 = norm(y-X*Beta).^2/(N-p);
-% And finally covariance matrix
+% Covariance matrix
 Cov = sigma2 * inv(R);
