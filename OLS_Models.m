@@ -96,5 +96,5 @@ axis xy;
 hold on;
 plot(Border(:,1),Border(:,2))
 colorbar
-title('Y_hat_OLS')
+title('Variance')
 hold off
