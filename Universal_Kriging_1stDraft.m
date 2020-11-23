@@ -17,13 +17,13 @@ Dmax = 0.5*max(Dkk(:));
 [rhat,s2hat,m,n,d] = covest_nonparametric(Dkk,res,Kmax,Dmax); 
 Nr = length(res); % Number of residuals
 
-for ii = 1:100 % Bootstrapping 100 permutations
+for ii = 1:100 %Bootstrapping 100 permutations
     i = randperm(Nr);
     rp = res(i);
     [rr(ii,:), s2hat,m,n,d] = covest_nonparametric(Ck, rp, Kmax, Dmax);
 end
 rr_std = std(rr);
-I_top = mean(rr) + std(rr)*1.96;
+I_top = mean(rr) + std(rr)*1.96; %Confidence interval 
 I_bot = mean(rr) - std(rr)*1.96;
 
 figure,
@@ -34,15 +34,27 @@ plot(I_bot, '--b');
 
 par = zeros(4,1);
 %% ML
-[par_1, beta_Krig] = covest_ml(Dkk, Y, 'matern', par, X1, 'ml');
-Sigma_kk = matern_covariance(Dkk, par_1(1), par_1(2), par_1(3)) + par_1(4).*eye(size(Dkk));
+[par_1, beta_Krig] = covest_ml(Dkk, Y, 'matern', par, X1, 'ml'); %Approximating cov-parameters and beta with ml
+
+%% Comparing Non-parametric covf. with parametric: 
+figure,
+plot(rhat);
+hold on;
+cov_param = matern_covariance(linspace(1,length(rhat),size(rhat,2)), par_1(1), par_1(2), par_1(3));
+plot(cov_param);
+legend('Non-parametric', 'Parametric - Matérn');
+grid on;
+title('Nonparametric estimate vs. Parametric');
+%%
+
+Sigma_kk = matern_covariance(Dkk, par_1(1), par_1(2), par_1(3)) + par_1(4).*eye(size(Dkk)); %Creating required covariance-matrices
 Sigma_uk = matern_covariance(Duk, par_1(1), par_1(2), par_1(3)) + par_1(4).*eye(size(Duk));
 Sigma_uu = matern_covariance(Duu, par_1(1), par_1(2), par_1(3)) + par_1(4).*eye(size(Duu));
 Sigma_ku = matern_covariance(Dku, par_1(1), par_1(2), par_1(3)) + par_1(4).*eye(size(Dku));
 Sigma_vk = matern_covariance(Dvk, par_1(1), par_1(2), par_1(3)) + par_1(4).*eye(size(Dvk)); 
 
 % Validation 
-Y_hat_2 = X1_grid * beta_Krig + Sigma_uk*((Sigma_kk) \ (Y-X1*beta_Krig));
+Y_hat_2 = X1_grid * beta_Krig + Sigma_uk*((Sigma_kk) \ (Y-X1*beta_Krig)); %Temp. interpolation for Krig_ML
 V_y_eta = Sigma_uu - Sigma_uk * (Sigma_kk \ Sigma_ku);
 V_y_mu = (X1_grid' - X1'*(Sigma_kk \ Sigma_ku))' * ((X1'*(Sigma_kk \ X1)) \ (X1_grid' - X1'*(Sigma_kk \ Sigma_ku)));
 V_y_Kriging = diag(V_y_eta + V_y_mu);
@@ -51,15 +63,16 @@ res_ML = Y_valid - Y_ML_val;
 RS_ML = sum((res_ML).^2);
 RMSE_ML = sqrt( mean( (Y_valid - Y_ML_val).^2 ) );
 %% REML
-[par_2, beta_Krig_2] = covest_ml(Dkk, Y, 'matern', par, X1, 'reml');
+[par_2, beta_Krig_2] = covest_ml(Dkk, Y, 'matern', par, X1, 'reml'); %Approximating cov-parameters and beta with reml
 Sigma_kk_REML = matern_covariance(Dkk, par_2(1), par_2(2), par_2(3)) + par_2(4).*eye(size(Dkk));
 Sigma_uk_REML  = matern_covariance(Duk, par_2(1), par_2(2), par_2(3)) + par_2(4).*eye(size(Duk));
 Sigma_uu_REML  = matern_covariance(Duu, par_2(1), par_2(2), par_2(3)) + par_2(4).*eye(size(Duu));
 Sigma_ku_REML  = matern_covariance(Dku, par_2(1), par_2(2), par_2(3)) + par_2(4).*eye(size(Dku));
 Sigma_vk_REML  = matern_covariance(Dvk, par_2(1), par_2(2), par_2(3)) + par_2(4).*eye(size(Dvk));
 
+
 % Validation
-Y_hat_3 = X1_grid * beta_Krig_2 + Sigma_uk_REML *((Sigma_kk_REML ) \ (Y-X1*beta_Krig_2));
+Y_hat_3 = X1_grid * beta_Krig_2 + Sigma_uk_REML *((Sigma_kk_REML ) \ (Y-X1*beta_Krig_2)); %Temp. interpolation for Krig_REML
 V_y_eta_2 = Sigma_uu_REML  - Sigma_uk_REML  * (Sigma_kk_REML  \ Sigma_ku_REML);
 V_y_mu_2 = (X1_grid' - X1'*(Sigma_kk_REML  \ Sigma_ku_REML ))' * ((X1'*(Sigma_kk_REML  \ X1)) \ (X1_grid' - X1'*(Sigma_kk_REML  \ Sigma_ku_REML )));
 V_y_Kriging_2 = diag(V_y_eta_2 + V_y_mu_2);
@@ -108,6 +121,8 @@ axis xy;
 hold on;
 plot(Border(:,1),Border(:,2))
 colorbar;
+
+
 %% Comparing different covariance functions
 covfunc = 'spherical';
 if strcmpi(covfunc,'gaussian')
