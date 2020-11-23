@@ -89,36 +89,54 @@ RMSE_OLS = RMSE(7);
 Kriging = nan(sz);
 Kriging(I_land) = Y_hat_2;
 figure,
+subplot(1,2,1)
 imagesc([4.9 30.9], [71.1 55.4], Kriging, 'alphadata', I_img)
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+set(gca,'FontSize',20)
 axis xy; 
 hold on;
+title('Temperature with Kriging (ML)')
 plot(Border(:,1),Border(:,2))
 colorbar;
 % Plotting variance
 V_Kriging = nan(sz);
 V_Kriging(I_land) = sqrt(V_y_Kriging);
-figure, 
+subplot(1,2,2)
 imagesc([4.9 30.9], [71.1 55.4], V_Kriging, 'alphadata', I_img)
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+set(gca,'FontSize',20)
 axis xy; 
 hold on;
+title('Variance')
 plot(Border(:,1),Border(:,2))
 colorbar; 
 %% Plotting Y_hat using REML
 Kriging_2 = nan(sz);
 Kriging_2(I_land) = Y_hat_3;
 figure,
+subplot(1,2,1)
 imagesc([4.9 30.9], [71.1 55.4], Kriging_2, 'alphadata', I_img)
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+set(gca,'FontSize',20)
 axis xy; 
 hold on;
+title('Temperature with Kriging (REML)')
 plot(Border(:,1),Border(:,2))
 colorbar;
 % Plotting variance
 V_Kriging_2 = nan(sz);
 V_Kriging_2(I_land) = sqrt(V_y_Kriging_2);
-figure, 
+subplot(1,2,2)
 imagesc([4.9 30.9], [71.1 55.4], V_Kriging_2, 'alphadata', I_img)
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+set(gca,'FontSize',20)
 axis xy; 
 hold on;
+title('Variance of prediction')
 plot(Border(:,1),Border(:,2))
 colorbar;
 
