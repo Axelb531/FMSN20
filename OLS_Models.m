@@ -60,38 +60,31 @@ Y_hat = X_true*Beta;
 sigma_2 = norm(Y_valid-Y_hat)^2/(n_y-size(X_valid,2));
 RMSE(7) = sqrt(mean((Y_valid-Y_hat).^2) );
 
-%Confidence interval
-ci_h = Y_valid+1.96*sqrt(var(Y_valid)/n_y);
-ci_l = Y_valid-1.96*sqrt(var(Y_valid)/n_y);
-figure(3);
-plot(Y_valid, 'x');
-hold on;
-plot(Y_hat, '*');
-%ylim([0,15]);
-plot(ci_h ,'--b');
-plot(ci_l,'--b');
-legend;
-%% Plotting Y-hat on map:
+%% Plotting Y-hat and variance of Y-hat on map:
 Y_hat_land = X1_grid*Beta;
 ols = nan(sz);
 ols(I_land) = Y_hat_land; 
 figure(4);
+subplot(1,2,1);
 imagesc([4.9 30.9], [71.1 55.4], ols, 'alphadata', I_img)
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+set(gca,'FontSize',20)
 axis xy; 
 hold on;
 plot(Border(:,1),Border(:,2))
 colorbar
-title('Y_{hat}OLS')
-hold off
-  
-%% Plotting variance on map
+title('Temperature with OLS')
 Vbeta = Sigma2 * inv(X1' * X1);
 Vmu = sum((X1_grid*Vbeta).*X1_grid,2);
 V_y = Sigma2 + Vmu; 
 V_ols = nan(sz);
 V_ols(I_land) = sqrt(V_y);  
-figure(5);
+subplot(1,2,2);
 imagesc([4.9 30.9], [71.1 55.4], V_ols, 'alphadata', I_img)
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+set(gca,'FontSize',20)
 axis xy; 
 hold on;
 plot(Border(:,1),Border(:,2))
