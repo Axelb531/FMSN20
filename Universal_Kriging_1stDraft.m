@@ -76,28 +76,40 @@ RMSE_OLS = RMSE(7);
 Kriging = nan(sz);
 Kriging(I_land) = Y_hat_2;
 figure,
-imagesc(Kriging); 
+imagesc([4.9 30.9], [71.1 55.4], Kriging, 'alphadata', I_img)
+axis xy; 
+hold on;
+plot(Border(:,1),Border(:,2))
 colorbar;
 % Plotting variance
 V_Kriging = nan(sz);
 V_Kriging(I_land) = sqrt(V_y_Kriging);
 figure, 
-imagesc(V_Kriging);
+imagesc([4.9 30.9], [71.1 55.4], V_Kriging, 'alphadata', I_img)
+axis xy; 
+hold on;
+plot(Border(:,1),Border(:,2))
 colorbar; 
 %% Plotting Y_hat using REML
 Kriging_2 = nan(sz);
 Kriging_2(I_land) = Y_hat_3;
 figure,
-imagesc(Kriging_2); 
+imagesc([4.9 30.9], [71.1 55.4], Kriging_2, 'alphadata', I_img)
+axis xy; 
+hold on;
+plot(Border(:,1),Border(:,2))
 colorbar;
 % Plotting variance
 V_Kriging_2 = nan(sz);
 V_Kriging_2(I_land) = sqrt(V_y_Kriging_2);
 figure, 
-imagesc(V_Kriging_2);
+imagesc([4.9 30.9], [71.1 55.4], V_Kriging_2, 'alphadata', I_img)
+axis xy; 
+hold on;
+plot(Border(:,1),Border(:,2))
 colorbar;
 %% Comparing different covariance functions
-covfunc = 'matern';
+covfunc = 'spherical';
 if strcmpi(covfunc,'gaussian')
     par_temp = zeros(3,1); 
     [par_comp, beta_Krig_comp] = covest_ml(Dkk, Y, 'gaussian', par_temp, X1, 'ml');
