@@ -9,5 +9,7 @@ Data for the assignment is given in the file HA1 temp 2015 06.mat the file proj1
 2. Latitude for each location. 
 3. Elevation in meters.
 4. Distance to closest coast.
-5.Distance to the Swedish coast.
-6. Distance to the Norwegian coast. Y and Y valid contains average temperatures at stations to use in the reconstruction and for validation.
+5. Distance to the Swedish coast.
+6. Distance to the Norwegian coast. 
+
+Y and Y valid contains average temperatures at stations to use in the reconstruction and for validation.
