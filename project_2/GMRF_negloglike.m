@@ -36,9 +36,10 @@ end
 %combine Q_x and Qbeta and create observation matrix
 %sz = [size(A,1), size(A,2)];
 N = size(B,2);
-Qbeta =  qbeta * speye(N);
-Qall = blkdiag(Q_x, Qbeta);
-Aall = A;
+%Qbeta =  qbeta * speye(N);
+Qbeta = qbeta*speye(N);
+Qall = blkdiag(Q_x,Qbeta);
+Aall = [A B];
 
 %declare x_mode as global so that we start subsequent optimisations from
 %the previous mode (speeds up nested optimisation).
@@ -72,9 +73,13 @@ if ok_x~=0 || ok_xy~=0
   negloglike = realmax;
   return;
 end
-
-%note that f = -log_obs + x_mode'*Q*x_mode/2.
-negloglike =  f - sum(log(diag(R_x))) + sum(log(diag(R_xy)));
+          
+%note that f = -log_obs + x_mode'*Q*x_mode/2.                 
+negloglike = f - sum(log(diag(R_x)))/2 + sum(log(diag(R_xy)))/2;
+%                    ^                          ^
+%                    | log |Q_x|/2              | log |Q_x|y|/2 |||||| Ska
+%                    det va /2 eller ej?
+%negloglike = f - sum(log(diag(R_x))) + N / 2 * log(qbeta) + sum(log(diag(R_xy)));
 
 %inverse reorder before returning
 x_mode(p) = x_mode;

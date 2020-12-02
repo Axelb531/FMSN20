@@ -48,23 +48,23 @@ x_mode = [];
 %subset to only observed points here
 % [0 0] - two parameters to estimate, lets start with 0 in log-scale.
 
-Atilde = [A B];
-par = fminsearch( @(theta) GMRF_negloglike(theta, Y, Atilde, B, spde), [0 0]);
+par = fminsearch( @(theta) GMRF_negloglike(theta, Y, A, B, spde), [0 0]);
 %conditional mean is now given be the mode
 E_xy = x_mode;
 
 %use the taylor expansion to compute posterior precision
 %you need to reuse some of the code from GMRF_negloglike_NG 
 %to create inputs for this function call
-
 N = size(B,2);
-Qbeta =  1e-6 * speye(N);
-Q_x = par(1)*(par(2)*spde.C + spde.G);
-Qall = blkdiag(Q_x, Qbeta);
+Q_x = exp(par(1))*exp((par(2))*spde.C + spde.G);
+qbeta=1e-6;
+Qbeta = qbeta*speye(N);
+Qall = blkdiag(Q_x,Qbeta);
+Atilde = [A B];
+
 [~, ~, Q_xy] = GMRF_taylor(E_xy, Y, Atilde, Qall);
 %%
-E_zy = ;
-imagesc( reshape(E_zy,sz) );
 e = [zeros(size(Q_xy,1)-size(B,2), size(B,2)); eye(size(B,2))];
 V_beta0 = e'*(Q_xy\e);
+
 

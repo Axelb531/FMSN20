@@ -22,19 +22,19 @@ function [logp, dlogp, d2logp]= GMRF_taylor(x_0, y, A, Q)
 %compute log observations, and derivatives
 z = A*x_0;
 
-f = z.*y-log(exp(z)+1);
+f =  z.*y - log(exp(z)+1);
 %compute the function, log p(x|y,theta)
-logp = (x_0'*Q*x_0)/2 - sum(f);
+logp = (x_0'*Q*x_0)/2 - sum(f); 
 
 if nargout>1
   %compute derivatives (if needed, i.e. nargout>1)
-  d_f = y - (exp(z) ./ (exp(z) + 1)); % first derivative wrt z_i
+  d_f = y - (exp(z)./(exp(z)+1)) ; % first derivative wrt z_i
   dlogp = Q*x_0 - A'*d_f;
 end
 
 if nargout>2
   %compute hessian (if needed, i.e. nargout>2)
-  d2_f = -exp(z) ./ (exp(z) + 1).^2; % second derivative wrt z_i
+  d2_f = -exp(z)./((exp(z)+1).^2); % second derivative wrt z_i
   n = size(A,1);
   d2logp = Q - A'*spdiags(d2_f,0,n,n)*A;
 end
