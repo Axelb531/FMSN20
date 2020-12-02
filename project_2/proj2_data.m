@@ -48,24 +48,23 @@ x_mode = [];
 %subset to only observed points here
 % [0 0] - two parameters to estimate, lets start with 0 in log-scale.
 
-% negloglike = GMRF_negloglike_Be(theta, y, A, B, spde, qbeta, alpha)
-%
-% theta = log([tau kappa2]);
-% y = the data vector, as a column with n elements
-% A = the observation matrix, sparse n-by-N
-% B = covariates for the observations, n-by-Nbeta
-% spde = structure with the three matrices used to construct Q: C,G,G2.
-%          see igmrfprec, sparse N-by-N
-% qbeta = Precision for the regression parameters (Nbeta)-by-(Nbeta)
-% alpha = which Q to use (alpha=1 or 2).
-%
 Atilde = [A B];
 par = fminsearch( @(theta) GMRF_negloglike(theta, Y, Atilde, B, spde), [0 0]);
 %conditional mean is now given be the mode
 E_xy = x_mode;
-%%
+
 %use the taylor expansion to compute posterior precision
 %you need to reuse some of the code from GMRF_negloglike_NG 
 %to create inputs for this function call
 
-%[~, ~, Q_xy] = gmrf_taylor(E_xy, );
+N = size(B,2);
+Qbeta =  1e-6 * speye(N);
+Q_x = par(1)*(par(2)*spde.C + spde.G);
+Qall = blkdiag(Q_x, Qbeta);
+[~, ~, Q_xy] = GMRF_taylor(E_xy, Y, Atilde, Qall);
+%%
+E_zy = ;
+imagesc( reshape(E_zy,sz) );
+e = [zeros(size(Q_xy,1)-size(B,2), size(B,2)); eye(size(B,2))];
+V_beta0 = e'*(Q_xy\e);
+
