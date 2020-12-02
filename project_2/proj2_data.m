@@ -56,7 +56,11 @@ E_xy = x_mode;
 %you need to reuse some of the code from GMRF_negloglike_NG 
 %to create inputs for this function call
 N = size(B,2);
-Q_x = exp(par(1))*exp((par(2))*spde.C + spde.G);
+tau = exp(par(1));
+kappa2 = exp(par(2));
+ % Q_x = exp(par(1))*exp((par(2))*spde.C + spde.G); <- Förra (fel på
+ % parenteserna)
+Q_x = tau*(kappa2*spde.C + spde.G);
 qbeta=1e-6;
 Qbeta = qbeta*speye(N);
 Qall = blkdiag(Q_x,Qbeta);
