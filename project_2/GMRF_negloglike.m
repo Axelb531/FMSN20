@@ -1,4 +1,4 @@
-function negloglike = GMRF_negloglike_Be(theta, y, A, B, spde, qbeta, alpha)
+function negloglike = GMRF_negloglike(theta, y, A, B, spde, qbeta, alpha)
 % GMRF_NEGLOGLIKE_BE  Calculate the GMRF data likelihood, non-Gaussian observations
 %
 % negloglike = GMRF_negloglike_Be(theta, y, A, B, spde, qbeta, alpha)
@@ -16,9 +16,6 @@ function negloglike = GMRF_negloglike_Be(theta, y, A, B, spde, qbeta, alpha)
 
 % $Id: gmrf_negloglike_skeleton.m 4454 2011-10-02 18:29:12Z johanl $
 
-% Remove this line from your copy:
-warning('This is only a skeleton function!  Copy it and fill in the blanks!')
-
 %default values for
 if nargin<6 || isempty(qbeta), qbeta=1e-6; end
 if nargin<7 || isempty(alpha), alpha=1; end
@@ -29,16 +26,19 @@ kappa2 = exp(theta(2));
 
 %compute Q
 if alpha==1
-  Q_x = ?
+  Q_x = tau*(kappa2*spde.C + spde.G);
 elseif alpha==2
-  Q_x = ?
+  Q_x = tau*(kappa2*kappa2.*spde.C + 2*kappa2*spde.G + spde.G^2);
 else
   error('Unknown alpha')
 end
 
 %combine Q_x and Qbeta and create observation matrix
-Qall = blkdiag(?);
-Aall = ?
+%sz = [size(A,1), size(A,2)];
+N = size(B,2);
+Qbeta =  qbeta * speye(N);
+Qall = blkdiag(Q_x, Qbeta);
+Aall = A;
 
 %declare x_mode as global so that we start subsequent optimisations from
 %the previous mode (speeds up nested optimisation).
@@ -56,10 +56,10 @@ Aall = Aall(:,p);
 x_mode = x_mode(p);
 
 %find mode
-x_mode = fminNR(@(x) GMRF_taylor_skeleton(x, y, Aall, Qall), x_mode);
+x_mode = fminNR(@(x) GMRF_taylor(x, y, Aall, Qall), x_mode);
 
 %find the Laplace approximation of the denominator
-[f, ~, Q_xy] = GMRF_taylor_skeleton(x_mode, y, Aall, Qall);
+[f, ~, Q_xy] = GMRF_taylor(x_mode, y, Aall, Qall);
 %note that f = -log_obs + x_mode'*Q*x_mode/2.
 
 %Compute choleskey factors
@@ -74,7 +74,7 @@ if ok_x~=0 || ok_xy~=0
 end
 
 %note that f = -log_obs + x_mode'*Q*x_mode/2.
-negloglike = ?
+negloglike =  f - sum(log(diag(R_x))) + sum(log(diag(R_xy)));
 
 %inverse reorder before returning
 x_mode(p) = x_mode;
