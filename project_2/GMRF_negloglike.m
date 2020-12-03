@@ -75,11 +75,8 @@ if ok_x~=0 || ok_xy~=0
 end
           
 %note that f = -log_obs + x_mode'*Q*x_mode/2.                 
-negloglike = f - sum(log(diag(R_x)))/2 + sum(log(diag(R_xy)))/2;
-%                    ^                          ^
-%                    | log |Q_x|/2              | log |Q_x|y|/2 |||||| Ska
-%                    det va /2 eller ej?
-%negloglike = f - sum(log(diag(R_x))) + N / 2 * log(qbeta) + sum(log(diag(R_xy)));
+negloglike = f - sum(log(diag(R_x))) + sum(log(diag(R_xy)));
+%Division with /2 cancels out according to : log(det(Q)) = 2*sum(Diag(R_x)) 
 
 %inverse reorder before returning
 x_mode(p) = x_mode;
