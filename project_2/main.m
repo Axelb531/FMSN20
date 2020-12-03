@@ -37,16 +37,19 @@ E_out = exp(E_zy);
 
 e = [zeros(size(Q_xy,1)-n_B, n_B); eye(n_B)];
 V_beta0 = e'*(Q_xy\e);
-E_beta;
 beta_int_size = sqrt(diag(V_beta0)) * 1.96;
+
 for i = 1:n_B
   fprintf(1, 'Beta %d: %11.4f +- %.4f\n', i, E_beta(i), beta_int_size(i));
 end
 
-%Simulation over 1000 samples of the approximate posterior
+% Plotting V_beta in boxplot:
+boxplot(E_beta);
+
+% Simulation over 1000 samples of the approximate posterior
 
 Rxy = chol(Q_xy);
-x_sample = repmat(x_mode(:),[1,1000]) + Rxy\randn(size(Rxy,1),1000);
+x_samp = repmat(x_mode(:),[1,1000]) + Rxy\randn(size(Rxy,1),1000);
 
 %% Test
 %Rxy \ randn(size(Rxy,1), 1000));
