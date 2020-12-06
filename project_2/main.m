@@ -7,7 +7,8 @@ I_obs = reshape(sum(A,1),sz);
 I_grid = reshape(sum(A_grid,1),sz);
 q_beta = 1e-6;
 %% Specify which betas we want  
-B;
+B = [B(:,1), B(:,3), B(:,4), B(:,6)];
+B_grid = [B_grid(:,1), B_grid(:,3), B_grid(:,4), B_grid(:,6)];
 %% Create X-mode
 global x_mode;
 x_mode = [];
@@ -27,35 +28,36 @@ Atilde = [A B];
 [~, ~, Q_xy] = GMRF_taylor(E_xy, Y, Atilde, Qtilde);
 %% Choosing Covariates
 E_xy = A_grid * x_mode(1:end - n_B);
-E_beta = x_mode(end - n_B + 1:end);
-E_Bbeta = B_grid * E_beta;
-E_zy = E_xy + E_Bbeta;
-%E_out = exp(E_zy);
 
-%reuse taylor expansion to compute posterior precision
+E_beta = x_mode(end - n_B + 1:end);
+
+E_Bbeta = B_grid * E_beta;
+
+E_zy = E_xy + E_Bbeta;
+
+%E_true = exp(E_zy);
+
 
 e = [zeros(size(Q_xy,1)-n_B, n_B); eye(n_B)];
 V_beta0 = e'*(Q_xy\e);
-beta_int_size = sqrt(diag(V_beta0)) * 1.96;
-%
-%for i = 1:n_B
-%  fprintf(1, 'Beta %d: %11.4f +- %.4f\n', i, E_beta(i), beta_int_size(i));
-%end
+beta_i = sqrt(diag(V_beta0)) * 1.96;
 
-% Plotting V_beta in boxplot:
-figure(6);
-%plot(x,y*ones(size(x)))
+for i = 1:n_B
+  print = ['Beta ', num2str(i), ' : ', num2str(V_beta0(i,i)), ' +- ', num2str(beta_i(i))];
+  disp(print);
+end
 
-CI_U = E_beta(2:end) + beta_int_size(2:end);
-CI_L = E_beta(2:end) - beta_int_size(2:end);
+CI_U = E_beta(2:end) + beta_i(2:end);
+CI_L = E_beta(2:end) - beta_i(2:end);
 
-plot(CI_U, '*');
-hold on;
-plot(CI_L, '*');
-%line([0 6],[0 0],'LineWidth',2);
+%Plotted using matlab r2014b, broken on newer versions.
+%figure(6);
+%candle(CI_U,CI_U,CI_L,CI_L 'b');
+%xlim([0.5,5.5]);
+%line([0 7],[0 0],'LineWidth',2);
+%ylim([-2 2]);
+%grid on;
 
-%xlim([1,6]);
-%ylim([-1 1]);
 %xticklabels(names(2:end));
 
 %% Simulation over 1000 samples of the approximate posterior
