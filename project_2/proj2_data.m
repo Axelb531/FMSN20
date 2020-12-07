@@ -1,5 +1,6 @@
 %% load data
 load( 'AL_data_2000_BP.mat' )
+alpha = 2;
 % B vector containing standard data on human land use
 B = [B(:,1)  B(:,2)  B(:,3)  B(:,4) B(:,5) B(:,6)];
 % B vector with logitransformed human land use
@@ -64,6 +65,7 @@ tau = exp(par(1));
 kappa2 = exp(par(2));
  % Q_x = exp(par(1))*exp((par(2))*spde.C + spde.G); <- Förra (fel på
  % parenteserna)
+
 Q_x = tau*(kappa2*spde.C + spde.G);
 qbeta=1e-6;
 Qbeta = qbeta*speye(N);
