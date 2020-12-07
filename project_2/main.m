@@ -6,11 +6,13 @@ spde.G2 = spde.G*spde.G;
 I_obs = reshape(sum(A,1),sz);
 I_grid = reshape(sum(A_grid,1),sz);
 q_beta = 1e-6;
-alpha = 2;
+% Car or Sar?
+alpha = 1;
 % Selection of model (Car:1, Sar:2)
 %% Specify which betas we want  
 B = [B(:,1), B(:,3), B(:,4), B(:,6)];
 B_grid = [B_grid(:,1), B_grid(:,3), B_grid(:,4), B_grid(:,6)];
+
 %% Evaluating Xmode
 global x_mode;
 x_mode = [];
@@ -29,7 +31,7 @@ Q_beta = q_beta*eye(n_B);
 Qtilde = blkdiag(Q_x,Q_beta);
 Atilde = [A B];
 [~, ~, Q_xy] = GMRF_taylor(E_xy, Y, Atilde, Qtilde);
-
+E_beta = x_mode(end - n_B + 1:end);
 %% Simulation 1000 samples of the approximate posterior
 Rxy = chol(Q_xy);
 x_samp = repmat(x_mode(:),[1,1000]) + Rxy\randn(size(Rxy,1),1000);
@@ -130,7 +132,7 @@ set(gca,'FontSize',30)
 subplot(1,2,1)
 imagesc(longitude, latitude([2 1]),reshape(A_grid'*logsig(E_zy_mean-CI95_zy_mean),sz),'alphadata', I_grid);
 axis xy tight
-title('95% CI - Lower limit ')
+title('95% CI - Lower limit (Probability) ')
 colorbar
 set(gca,'FontSize',30)
 subplot(1,2,2)

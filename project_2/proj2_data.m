@@ -2,9 +2,9 @@
 load( 'AL_data_2000_BP.mat' )
 alpha = 2;
 % B vector containing standard data on human land use
-B = [B(:,1)  B(:,2)  B(:,3)  B(:,4) B(:,5) B(:,6)];
+B = [B(:,1)  B(:,2)  B(:,3)  B(:,4) B(:,5) B(:,6), B(:,7)];
 % B vector with logitransformed human land use
-%B = [B(:,1)  B(:,2)  B(:,3)  B(:,4) B(:,5) B(:,7)];
+%B = [B(:,1)  B(:,3)  B(:,4)  B(:,6)];
 %% create precision matrix
 spde.C = speye(prod(sz));
 spde.G = igmrfprec(sz,1);
@@ -24,6 +24,7 @@ for i=2:size(B_grid,2)
   axis xy tight
   title(names{i})
   colorbar
+  set(gca,'FontSize',30);
 end
 
 %plot observations and their covariates
@@ -32,14 +33,16 @@ subplot(3,3,1)
 imagesc(longitude, latitude([2 1]), reshape(A'*Y,sz), 'alphadata', I_obs)
 axis xy tight
 title('Pollen data')
+set(gca,'FontSize',25);
 colorbar
-for i=2:size(B,2)
+for i=2:size(B,2)-1
   subplot(3,3,i)
   imagesc(longitude, latitude([2 1]), reshape(A'*B(:,i),sz), ...
     'alphadata', I_obs)
   axis xy tight
   title(names{i})
   colorbar
+  set(gca,'FontSize',25);
 end
 
 %% Fit model
