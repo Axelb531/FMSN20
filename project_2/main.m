@@ -6,7 +6,7 @@ spde.G2 = spde.G*spde.G;
 I_obs = reshape(sum(A,1),sz);
 I_grid = reshape(sum(A_grid,1),sz);
 q_beta = 1e-6;
-alpha = 1;
+alpha = 2;
 % Selection of model (Car:1, Sar:2)
 %% Specify which betas we want  
 B = [B(:,1), B(:,3), B(:,4), B(:,6)];
