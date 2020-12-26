@@ -53,12 +53,12 @@ N3 = [1 0 1; 0 0 0; 1 0 1];
 y_m = y_beta(:,:,3:11);
 y_c = colstack(y_m);
 iter = 1000;
-Burnin = 250;
+Burnin = 700;
 beta = 0; 
 beta_prior = 1/10;
 
-Plog = zeros(sz(1),sz(2),nbr_class);
-
+%Plog = zeros(sz(1),sz(2),nbr_class);
+Plog = zeros(length(iter),1);
 
 z = cl_img;
 
@@ -80,15 +80,14 @@ end
  figure(6)
  image(rgbimage(z_sum))
  title('MRK-sim, Beta ')
- drawnow
-     
-     
+ drawnow    
      if i > Burnin   
          z_sum = z_sum + z;
      end
-       
 end
+
+%%
 figure(7) 
- 
-plot(Plog); 
-title('Pseduo likelyhood regression')
+plot(Plog);
+title('Pseduo likelihood regression')
+
