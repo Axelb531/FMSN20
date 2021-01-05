@@ -65,18 +65,28 @@ end
 end
 
 z_mean = z_sum./(iter-Burnin);
+% Choosing plot number based on N
+if (sum(find(N,2)) == 6)
+    plt = [4, 5];
+    tit = string('N1');
+elseif(sum(find(N,2)) == 3)
+    plt = [6,7];
+    tit = string('N2');
+elseif(sum(find(N,2))== 4)
+    plt = [8,9];
+    tit = string('N3');
+end
 
-
-figure(4),
+figure(plt(1)),
 subplot(2,2,(nbr_class-2)); 
 plot(Plog);
-sgtitle('Pseduo-likelihood of diffrent number of classes');
+sgtitle('Pseduo-likelihood of diffrent number of classes - '+ tit );
 title(string((nbr_class)) + ' classes ');
-figure(5),
+figure(plt(2)),
 [~,z_plot] = max(z_mean,[],3);
 subplot(2,2,(nbr_class-2)); 
 imagesc(z_plot);
-sgtitle('GMRF classification');
+sgtitle('GMRF classification - '+tit);
 title(string((nbr_class)) + ' classes ');
 
 end
