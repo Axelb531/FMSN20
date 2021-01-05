@@ -1,5 +1,5 @@
 
-# 1. Classification of fMRI data using MRFs and Gibbs (MCMC):
+# Classification of fMRI data using MRFs and Gibbs (MCMC):
 The task is to classify the pixels in an image, assuming an MRF structure for the pixel classes, and conditionally independent Gaussian observations,
 􏰉y(si)|z(si, k) = 1􏰊 ∈ N 􏰇μk, Σk􏰈
 Study the fMRI data and the initial analysis presented in fmri class init.m. The idea is to first perform data reduction using either PCA directly on the fMRI data or by first regressing the data onto the temporal regressors in X and then performing PCA on the regression coefficients. Here we see the image as having either 160 (the time points) or 11 (the regression coefficients) “colour layers”.
