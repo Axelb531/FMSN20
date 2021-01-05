@@ -1,44 +1,33 @@
-load fmri.mat
-
-%size of data¨
-sz = size(img);
-nbr_class = 4;
-%Option 1: regress onto indicator functions
-beta = X\colstack(img)';
-%reshape back to an image where the beta-coefs are in each "color"-layer
-beta = reshape(beta', sz(1), sz(2), []);
-%and treat the beta:s as the image
-%Perform a PCA on the regression coefficients to find important components
-[y_beta, ~, P_beta] = pca(colstack(beta(:,:,3:end))); % PCA med alla regressionskoefficienter?
-y_beta = reshape(y_beta, sz(1), sz(2), []);
+function c = findClass(y_beta, y_time, sz, nbr_class, N, drawflag)
 %% KMEANS on regression
 xc_beta = colstack(y_beta(:,:,1:end));
-[cl_beta,theta_beta] = kmeans(xc_beta, nbr_class, inf, 0);
-figure, 
-imagesc(reshape(cl_beta, 87, 102))
-
+[cl_beta,~] = kmeans(xc_beta, nbr_class, inf, 0);
+figure(1);
+sgtitle('KMEANS classification on regression parameters');
+subplot(2,2,(nbr_class-2)); 
+imagesc(reshape(cl_beta, 87, 102));
+title(string((nbr_class)) + ' classes ');
 %% KMEANS on timedata
-[y,~,P_time] = pca(colstack(img));
-y = reshape(y, sz(1), sz(2), []);
-xc_time = colstack(y); 
-[cl_time,theta_time] = kmeans(xc_time, nbr_class, inf, 0);
-figure, 
+xc_time = colstack(y_time); 
+[cl_time,~] = kmeans(xc_time, nbr_class, inf, 0);
+figure(2);
+sgtitle('KMEANS classification on timeseries');
+subplot(2,2,(nbr_class-2)); 
 imagesc(reshape(cl_time, 87, 102))
-figure, 
-imagesc(beta(:,:,1));
+title(string((nbr_class)) + ' classes ');
 %% GMM on Regression model
 [theta_beta,prior]=normmix_gibbs(xc_beta,nbr_class);
 [cl,cl_ind,~]=normmix_classify(xc_beta,theta_beta,prior);
-figure,
+figure(3);
+sgtitle('Gaussian Mixture Model classification');
+subplot(2,2,(nbr_class-2)   ); 
 imagesc(reshape(cl, sz(1:2)));
+title(string((nbr_class)) + ' classes ');
 %% creating alpha posteriors from GMM
 alpha_posterior = log(prior(2:nbr_class)/prior(1));
 cl_img = reshape(cl_ind,[sz(1:2),nbr_class ]);
 
 %% Simulating MRF
-N1 = [0 1 0; 1 0 1; 0 1 0]; 
-N2 = [1 1 1; 1 0 1; 1 1 1]; 
-N3 = [1 0 1; 0 0 0; 1 0 1];
 
 y_m = y_beta(:,:,1:end);
 y_c = colstack(y_m);
@@ -54,21 +43,22 @@ z_z = cl_img;
 z_sum = zeros(size(z_z));
 for i=1:iter
     alpha_beta_post=mrf_gaussian_post([0 alpha_posterior],theta_beta,y_m);
-    z_z= mrf_sim(z_z, N2, alpha_beta_post, beta, 1);
-    [~,Mz_b]=mrf_sim(z_z,N2,alpha_beta_post,beta,0);
+    z_z= mrf_sim(z_z, N, alpha_beta_post, beta, 1);
+    [~,Mz_b]=mrf_sim(z_z,N,alpha_beta_post,beta,0);
     Plog(i) = sum(log(Mz_b(logical(z_z))));
     
-    [alpha_posterior, beta, acc_beta] = gibbs_alpha_beta(alpha_posterior, beta, z_z, N2, beta_prior);
+    [alpha_posterior, beta, acc_beta] = gibbs_alpha_beta(alpha_posterior, beta, z_z, N, beta_prior);
 for k = 1:nbr_class
         ind_beta = find(z_z(:,:,k));
         [theta_beta{k}.mu, theta_beta{k}.Sigma] = gibbs_mu_sigma(y_c(ind_beta,:));
        
 end
- 
- figure(6)
+ if drawflag == 1
+ figure,
  image(rgbimage(z_z))
  title('MRK-sim, Beta ')
  drawnow    
+ end
      if i > Burnin   
          z_sum = z_sum + z_z;
      end
@@ -76,10 +66,17 @@ end
 
 z_mean = z_sum./(iter-Burnin);
 
-%%
-figure(7) 
+
+figure(4),
+subplot(2,2,(nbr_class-2)); 
 plot(Plog);
-title('Pseduo-likelihood regression')
-figure(8)
+sgtitle('Pseduo-likelihood of diffrent number of classes');
+title(string((nbr_class)) + ' classes ');
+figure(5),
 [~,z_plot] = max(z_mean,[],3);
+subplot(2,2,(nbr_class-2)); 
 imagesc(z_plot);
+sgtitle('GMRF classification');
+title(string((nbr_class)) + ' classes ');
+
+end
