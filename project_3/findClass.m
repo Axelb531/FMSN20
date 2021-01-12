@@ -33,7 +33,6 @@ y_m = y_beta(:,:,1:end);
 y_c = colstack(y_m);
 iter = 1000;
 Burnin = 350;
-alpha_posterior = ones(iter+1,nbr_class-1)/nbr_class;
 %Same beta for each class
 %beta = zeros(iter+1,1) ; 
 % Diffrent beta for each class
@@ -41,7 +40,6 @@ beta = zeros(iter+1,nbr_class);
 % Suggested prior
 beta_prior = 1/10*eye(nbr_class);
 
-%Plog = zeros(sz(1),sz(2),nbr_class);
 Plog = zeros(length(iter),1);
 z_z = cl_img;
 z_sum = zeros(size(z_z));

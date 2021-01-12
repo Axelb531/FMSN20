@@ -8,7 +8,7 @@ beta = X\colstack(img)';
 beta = reshape(beta', sz(1), sz(2), []);
 %and treat the beta:s as the image
 %Perform a PCA on the regression coefficients to find important components
-[y_beta, ~, P_beta] = pca(colstack(beta(:,:,3:end))); % PCA med alla regressionskoefficienter?
+[y_beta, ~, P_beta] = pca(colstack(beta(:,:,3:8))); % PCA med alla regressionskoefficienter?
 y_beta = reshape(y_beta, sz(1), sz(2), []);
 
 %Perform a PCA on the time-series data to find important components
@@ -17,10 +17,7 @@ y = reshape(y, sz(1), sz(2), []);
 
 
 N4 = [0 1 0; 1 0 1; 0 1 0]; 
-N8 = [1 1 1; 1 0 1; 1 1 1]; 
-
-
-
+N8 = [1 1 1; 1 0 1; 1 1 1];
 
 % Classifications with diffrent amount of classes
 for i = 3:6
