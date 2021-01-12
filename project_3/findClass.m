@@ -33,21 +33,25 @@ y_m = y_beta(:,:,1:end);
 y_c = colstack(y_m);
 iter = 1000;
 Burnin = 350;
-beta = 0; 
+alpha_posterior = ones(iter+1,nbr_class-1)/nbr_class;
+%Same beta for each class
+%beta = zeros(iter+1,1) ; 
+% Diffrent beta for each class
+beta = zeros(iter+1,nbr_class);
 % Suggested prior
-beta_prior = 1/10;
+beta_prior = 1/10*eye(nbr_class);
 
 %Plog = zeros(sz(1),sz(2),nbr_class);
 Plog = zeros(length(iter),1);
 z_z = cl_img;
 z_sum = zeros(size(z_z));
 for i=1:iter
-    alpha_beta_post=mrf_gaussian_post([0 alpha_posterior],theta_beta,y_m);
-    z_z= mrf_sim(z_z, N, alpha_beta_post, beta, 1);
-    [~,Mz_b]=mrf_sim(z_z,N,alpha_beta_post,beta,0);
+    alpha_beta_post=mrf_gaussian_post([0 alpha_posterior(i,:)],theta_beta,y_m);
+    z_z= mrf_sim(z_z, N, alpha_beta_post, beta(i,:), 1);
+    [~,Mz_b]=mrf_sim(z_z,N,alpha_beta_post, beta(i,:) ,0);
     Plog(i) = sum(log(Mz_b(logical(z_z))));
     
-    [alpha_posterior, beta, acc_beta] = gibbs_alpha_beta(alpha_posterior, beta, z_z, N, beta_prior);
+    [alpha_posterior(i+1,:), beta(i +1,:), ~] = gibbs_alpha_beta(alpha_posterior(i,:), beta(i,:), z_z, N, beta_prior);
 for k = 1:nbr_class
         ind_beta = find(z_z(:,:,k));
         [theta_beta{k}.mu, theta_beta{k}.Sigma] = gibbs_mu_sigma(y_c(ind_beta,:));
@@ -68,13 +72,10 @@ z_mean = z_sum./(iter-Burnin);
 % Choosing plot number based on N
 if (sum(find(N,2)) == 6)
     plt = [4, 5];
-    tit = string('N1');
+    tit = string('4 Neighbours');
 elseif(sum(find(N,2)) == 3)
     plt = [6,7];
-    tit = string('N2');
-elseif(sum(find(N,2))== 4)
-    plt = [8,9];
-    tit = string('N3');
+    tit = string('8 Neighbours');
 end
 
 figure(plt(1)),
