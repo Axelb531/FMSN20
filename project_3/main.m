@@ -16,15 +16,14 @@ y_beta = reshape(y_beta, sz(1), sz(2), []);
 y = reshape(y, sz(1), sz(2), []);
 
 
-N1 = [0 1 0; 1 0 1; 0 1 0]; 
-N2 = [1 1 1; 1 0 1; 1 1 1]; 
-N3 = [1 0 1; 0 0 0; 1 0 1];
+N4 = [0 1 0; 1 0 1; 0 1 0]; 
+N8 = [1 1 1; 1 0 1; 1 1 1]; 
+
 
 
 
 % Classifications with diffrent amount of classes
 for i = 3:6
-    findClass(y_beta, y, sz, i,N1, 0);
-    findClass(y_beta, y, sz, i,N2, 0);
-    findClass(y_beta, y, sz, i,N3, 0);
+    findClass(y_beta, y, sz, i,N4, 0);
+    findClass(y_beta, y, sz, i,N8, 0);
 end
